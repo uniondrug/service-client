@@ -1,0 +1,25 @@
+{
+    "name" : "uniondrug/service-client",
+    "description" : "client of micro service",
+    "keywords" : [
+        "phalcon"
+    ],
+    "license" : "proprietary",
+    "type" : "project",
+    "authors" : [
+        {
+            "name" : "fuyibing",
+            "email" : "websearch@163.com"
+        }
+    ],
+    "require" : {},
+    "autoload" : {
+        "psr-4" : {
+            "UniondrugServiceClient\\" : "src/"
+        }
+    },
+    "config" : {
+        "preferred-install" : "dist",
+        "sort-packages" : true
+    }
+}
