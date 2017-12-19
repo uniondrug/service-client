@@ -5,7 +5,6 @@
  * @date 2017-11-01
  * @link www.uniondrug.cn
  */
-
 namespace UniondrugServiceClient;
 
 use Phalcon\Di\Injectable;
@@ -17,23 +16,25 @@ use Phalcon\Di\Injectable;
  */
 class Log extends Injectable
 {
-
     /**
      * @var Result
      */
     private $result;
+    private $url;
     private $duration;
     private $args;
     private $logData = "";
+    private $lineComma = "\n";
+    private $tableComma = "";
 
-    private $lineComma = "|";
-    private $tableComma = "--";
+    private $enableAppendArgument = true;
+    private $enableBacktrace = true;
 
-
-    public function __construct(&$result, $duration, $args)
+    public function __construct(&$result, $url, $duration, $args)
     {
         $this->result = &$result;
-        $this->duration = $duration;
+        $this->url = $url;
+        $this->duration = (double) sprintf('%.03f', $duration);
         $this->args = &$args;
     }
 
@@ -46,32 +47,25 @@ class Log extends Injectable
          * Log头信息
          */
         if ($this->result->hasError()) {
-            $this->logData = "请求微服务失败 (".$this->result->getErrno().") - ".$this->result->getError();
+            $this->logData = '请求['.$this->url.']失败 - 用时['.$this->duration.']秒 - '.$this->result->getError();
+        } else {
+            $this->logData = '请求['.$this->url.']成功 - 用时['.$this->duration.']秒 - '.$this->result->getContents();
         }
-        else {
-            $this->logData = "请求微服务成功";
-        }
-        /**
-         * 参数信息
-         */
-        $this->appendArguments();
         /**
          * 写入日志
          */
         if ($this->result->hasError()) {
-            /**
-             * 脚本跟踪
-             */
-            $exception = $this->result->getException();
-            if ($exception) {
-                $this->appendException($exception);
-            }
-            else {
-                $this->appendBacktrace();
+            $this->enableAppendArgument && $this->appendArguments();
+            if ($this->enableBacktrace){
+                $exception = $this->result->getException();
+                if ($exception) {
+                    $this->appendException($exception);
+                } else {
+                    $this->appendBacktrace();
+                }
             }
             $this->logger->error($this->logData);
-        }
-        else {
+        } else {
             $this->logger->info($this->logData);
         }
     }
@@ -150,8 +144,7 @@ class Log extends Injectable
                 // script
                 if (isset($trace["file"], $trace["line"])) {
                     $this->logData .= $trace["file"]."(".$trace["line"]."): ";
-                }
-                else {
+                } else {
                     $this->logData .= "internal(0): ";
                 }
                 // class

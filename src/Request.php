@@ -159,7 +159,7 @@ class Request extends \stdClass
          * 写入日志
          */
         $duration = (float) microtime(true) - $begin;
-        $log = new Log($result, $duration, func_get_args());
+        $log = new Log($result, $url, $duration, func_get_args());
         $log->save();
         /**
          * 返回结果
