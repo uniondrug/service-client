@@ -5,22 +5,46 @@
  * @date 2017-11-01
  * @link www.uniondrug.cn
  */
-
 namespace UniondrugServiceClient;
 
 use \GuzzleHttp\Client;
 use Phalcon\Di;
 use UniondrugService\Registry;
+use UniondrugServiceServer\Data;
 
 /**
  * 发起服务请求
+ * @method Data withData(array $data)
+ * @method Data withError(string $error, int $errno)
+ * @method Data withObject(array $data)
+ * @method Data withList(array $data)
  * @package UniondrugServiceClient
  */
 class Request extends \stdClass
 {
-
     private static $httpClient = null;
     private static $httpOptions = [];
+
+    /**
+     * Response返回
+     *
+     * @param string $name
+     * @param array  $arguments
+     *
+     * @return mixed
+     * @throws \Exception
+     */
+    public function __call($name, $arguments)
+    {
+        $response = new Response();
+        if (method_exists($response, $name)) {
+            return call_user_func_array([
+                $response,
+                $name
+            ], $arguments);
+        }
+        throw new \Exception("call undefined '{$name}' method of response.");
+    }
 
     /**
      * 发送DELETE请求
@@ -161,12 +185,12 @@ class Request extends \stdClass
         /**
          * 组织日志
          */
-        $loggerData  = '【用时】'.sprintf('%.04f', microtime(true) - $begin).'秒';
+        $loggerData = '【用时】'.sprintf('%.04f', microtime(true) - $begin).'秒';
         $loggerData .= '【状态】'.($result->hasError() ? '失败' : '成功');
         $loggerData .= '【接口】'.$method.' '.$url;
         $loggerData .= '【参数】'.json_encode($body, true);
         $loggerData .= $result->hasError() ? '【错误】'.$result->getError() : '【返回】'.$result->getContents();
-        if ($result->hasError()){
+        if ($result->hasError()) {
             Di::getDefault()->getLogger('error')->error($loggerData."\r\n".$loggerError);
         } else {
             Di::getDefault()->getLogger('service')->info($loggerData);
@@ -203,7 +227,6 @@ class Request extends \stdClass
             } catch(\Exception $e) {
             }
         }
-
         return $options;
     }
 }
