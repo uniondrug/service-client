@@ -26,7 +26,6 @@ class Log extends Injectable
     private $logData = "";
     private $lineComma = "\n";
     private $tableComma = "";
-
     private $enableAppendArgument = true;
     private $enableBacktrace = true;
 
@@ -47,16 +46,16 @@ class Log extends Injectable
          * Log头信息
          */
         if ($this->result->hasError()) {
-            $this->logData = '请求['.$this->url.']失败 - 用时['.$this->duration.']秒 - '.$this->result->getError();
+            $this->logData = '【失败】'.$this->url.'【用时】'.$this->duration.' 秒【原因】'.$this->result->getError();
         } else {
-            $this->logData = '请求['.$this->url.']成功 - 用时['.$this->duration.']秒 - '.$this->result->getContents();
+            $this->logData = '【成功】'.$this->url.'【用时】'.$this->duration.' 秒【返回】'.$this->result->getContents();
         }
         /**
          * 写入日志
          */
         if ($this->result->hasError()) {
             $this->enableAppendArgument && $this->appendArguments();
-            if ($this->enableBacktrace){
+            if ($this->enableBacktrace) {
                 $exception = $this->result->getException();
                 if ($exception) {
                     $this->appendException($exception);
