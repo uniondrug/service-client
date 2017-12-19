@@ -9,6 +9,7 @@
 namespace UniondrugServiceClient;
 
 use \GuzzleHttp\Client;
+use Phalcon\Di;
 use UniondrugService\Registry;
 
 /**
@@ -148,19 +149,28 @@ class Request extends \stdClass
          */
         $begin = (float) microtime(true);
         $result = new Result();
+        $loggerError = "";
         try {
             $url = Registry::getUrl($name, $route);
             $client = self::$httpClient->request($method, $url, $this->fetchOptions($query, $body));
             $result->setHttpResponse($client);
         } catch(\Exception $e) {
             $result->setException($e);
+            $loggerError = $e->getTraceAsString();
         }
         /**
-         * 写入日志
+         * 组织日志
          */
-        $duration = (float) microtime(true) - $begin;
-        $log = new Log($result, $url, $duration, func_get_args());
-        $log->save();
+        $loggerData  = '【用时】'.sprintf('%.04f', microtime(true) - $begin).'秒';
+        $loggerData .= '【状态】'.($result->hasError() ? '失败' : '成功');
+        $loggerData .= '【接口】'.$method.' '.$url;
+        $loggerData .= '【参数】'.json_encode($body, true);
+        $loggerData .= $result->hasError() ? '【错误】'.$result->getError() : '【返回】'.$result->getContents();
+        if ($result->hasError()){
+            Di::getDefault()->getLogger('error')->error($loggerData."\r\n".$loggerError);
+        } else {
+            Di::getDefault()->getLogger('service')->info($loggerData);
+        }
         /**
          * 返回结果
          */
