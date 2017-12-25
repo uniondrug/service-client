@@ -6,14 +6,23 @@
 * Phalcon `3.2+`
 
 
-### Request
-1. `delete`(`string`, `string`, `array`, `array`)
-1. `get`(`string`, `string`, `array`)
-1. `head`(`string`, `string`, `array`)
-1. `options`(`string`, `string`, `array`, `array`)
-1. `patch`(`string`, `string`, `array`, `array`)
-1. `post`(`string`, `string`, `array`, `array`)
-1. `put`(`string`, `string`, `array`, `array`)
+### methods
+
+1. Restful请求服务
+    1. `delete`(`string`, `string`, `array`, `array`)
+    1. `get`(`string`, `string`, `array`)
+    1. `head`(`string`, `string`, `array`)
+    1. `options`(`string`, `string`, `array`, `array`)
+    1. `patch`(`string`, `string`, `array`, `array`)
+    1. `post`(`string`, `string`, `array`, `array`)
+    1. `put`(`string`, `string`, `array`, `array`)
+1. Response结果返回
+    1. `withError`(`string`, `int`)
+    1. `withList`(`array`)
+    1. `withObject`(`array`)
+    1. `withPaging`(`array`, `ResponsePaging`)
+    1. `withSuccess`()
+
 
 ```php
 public function postAction(){
@@ -34,11 +43,7 @@ public function postAction(){
     └── uniondrug
         └── service-client
             ├── src
-            │   ├── Exception.php
-            │   ├── Registry.php
-            │   ├── ResponseWriter.php
-            │   ├── ResultReader.php
-            │   └── Types.php
+            │   └── Client.php
             └── README.md
 ```
 
