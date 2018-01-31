@@ -1,9 +1,11 @@
 <?php
 /**
  * 微服务
+ *
  * @author wsfuyibing <websearch@163.com>
- * @date 2017-12-21
+ * @date   2017-12-21
  */
+
 namespace UniondrugServiceClient;
 
 use UniondrugService\Exception;
@@ -18,7 +20,7 @@ use UniondrugService\ResponseWriter;
  * @method ResponseData withError(string $error, int $errno)
  * @method ResponseData withList(array $data)
  * @method ResponseData withObject(array $data)
- * @method ResponseData withPaging(array $data, ResponsePaging $paging)
+ * @method ResponseData withPaging(array | \Phalcon\Paginator\Adapter\QueryBuilder $data, ResponsePaging $paging = null)
  * @method ResponseData withSuccess()
  * @method RequestReader delete(string $name, string $route, array $query, array $body)
  * @method RequestReader get(string $name, string $route, array $query, array $body)
@@ -27,6 +29,7 @@ use UniondrugService\ResponseWriter;
  * @method RequestReader patch(string $name, string $route, array $query, array $body)
  * @method RequestReader post(string $name, string $route, array $query, array $body)
  * @method RequestReader put(string $name, string $route, array $query, array $body)
+ *
  * @package UniondrugServiceClient
  */
 class Client extends \stdClass
@@ -38,7 +41,7 @@ class Client extends \stdClass
         'PATCH',
         'POST',
         'PUT',
-        'OPTIONS'
+        'OPTIONS',
     ];
     /**
      * @var ResponseWriter
@@ -48,7 +51,7 @@ class Client extends \stdClass
     /**
      * Magic Dispatcher
      *
-     * @param string $name 方法名称
+     * @param string $name      方法名称
      * @param array  $arguments 方法接受的参数
      *
      * @return Request|Response
@@ -60,6 +63,7 @@ class Client extends \stdClass
         $method = strtoupper($name);
         if (in_array($method, self::$requestMethods)) {
             array_unshift($arguments, $method);
+
             return call_user_func_array('\UniondrugService\RequestReader::send', $arguments);
         }
         // 2. Response返回
@@ -69,7 +73,7 @@ class Client extends \stdClass
         if (method_exists(self::$response, $name)) {
             return call_user_func_array([
                 self::$response,
-                $name
+                $name,
             ], $arguments);
         }
         // 3. 未定义
