@@ -20,7 +20,7 @@ use UniondrugService\ResponseWriter;
  * @method ResponseData withError(string $error, int $errno)
  * @method ResponseData withList(array $data)
  * @method ResponseData withObject(array $data)
- * @method ResponseData withPaging(array | \Phalcon\Paginator\Adapter\QueryBuilder $data, ResponsePaging $paging = null)
+ * @method ResponseData withPaging(array | \stdClass $data, ResponsePaging $paging = null)
  * @method ResponseData withSuccess()
  * @method RequestReader delete(string $name, string $route, array $query, array $body)
  * @method RequestReader get(string $name, string $route, array $query, array $body)
